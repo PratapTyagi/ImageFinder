@@ -1,24 +1,27 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+import axios from "axios";
 
 const Search = () => {
   const [state, setState] = useState({
     searchText: "",
-    amount: "15",
     apiUrl: "https://pixabay.com/api/",
     apiKey: "21217288-a0bc84025ba22b55c83b72f00",
     images: [],
   });
 
+  useEffect(() => {
+    axios
+      .get(
+        `${state.apiUrl}.?key=${state.apiKey}&q=${state.searchText}&image_type=photo&safesearch=true`
+      )
+      .then((data) => setState({ ...state, images: data.data.hits }))
+      .catch((err) => console.log(err));
+  }, []);
+
   const onTextChange = (e) => {
     setState({ ...state, [e.target.name]: e.target.value });
     console.log(state.searchText);
-  };
-
-  const onAmountChange = (e, index, value) => {
-    setState({ [state.amount]: value });
   };
 
   console.log(state);
@@ -32,19 +35,6 @@ const Search = () => {
         label="Search for images"
       />
       <br />
-      <br />
-      <Select
-        name="amount"
-        label="Amount"
-        value={state.amount}
-        onChange={onTextChange}
-      >
-        <MenuItem value="5">5</MenuItem>
-        <MenuItem value="10">10</MenuItem>
-        <MenuItem value="15">15</MenuItem>
-        <MenuItem value="20">20</MenuItem>
-        <MenuItem value="30">30</MenuItem>
-      </Select>
       <br />
     </div>
   );
